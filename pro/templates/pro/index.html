@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake and Apple Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #72edf2 0%, #5151e5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            color: white;
+        }
+
+        .game-container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            border: 5px solid white;
+            background-color: #000;
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .score {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+        .game-over {
+            display: none;
+            font-size: 24px;
+            color: red;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+
+            .game-container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .score {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Snake and Apple Game</h1>
+        <div class="score">Score: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <button id="startBtn">Start Game</button>
+        <button id="stopBtn" disabled>Stop Game</button>
+        <div class="game-over" id="gameOver">Game Over! <br><button onclick="window.location.reload()">Restart</button></div>
+    </div>
+    <script>
+        let snake = [];
+        let apple = {};
+        let direction = 'RIGHT';
+        let gameInterval;
+        let gameRunning = false;
+        let score = 0;
+        let gameOver = false;
+        let speed = 150;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('stopBtn').addEventListener('click', stopGame);
+
+        function startGame() {
+            if (!gameRunning) {
+                gameRunning = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('gameOver').style.display = 'none';
+
+                fetch('/start_game')
+                    .then(response => response.json())
+                    .then(data => {
+                        snake = data.snake;
+                        apple = data.apple;
+                        direction = data.direction;
+                        score = data.score;
+                        updateScore();
+                        startGameLoop();
+                    });
+            }
+        }
+
+        function stopGame() {
+            if (gameRunning) {
+                clearInterval(gameInterval);
+                gameRunning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        }
+
+        function startGameLoop() {
+            gameInterval = setInterval(gameLoop, speed);
+        }
+
+        function gameLoop() {
+            if (gameOver) return;
+
+            fetch(`/move_snake?snake=${snake.map(segment => segment.join(',')).join(';')}&direction=${direction}&apple=${apple[0]},${apple[1]}&score=${score}`)
+                .then(response => response.json())
+                .then(data => {
+                    snake = data.snake;
+                    apple = data.apple;
+                    direction = data.direction;
+                    score = data.score;
+                    if (data.gameOver) {
+                        gameOver = true;
+                        document.getElementById('gameOver').style.display = 'block';
+                    }
+                    updateScore();
+                    drawGame();
+
+                    if (snake.length % 5 === 0) {
+                        speed = Math.max(100, speed - 10);
+                        clearInterval(gameInterval);
+                        startGameLoop();
+                    }
+                });
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the snake's body
+            snake.forEach((segment, index) => {
+                if (index === 0) {
+                    // Draw the snake's head (with eyes and mouth)
+                    drawSnakeHead(segment[0], segment[1]);
+                } else if (index === snake.length - 1) {
+                    // Draw the tail as a rounded shape
+                    drawSnakeTail(segment[0], segment[1]);
+                } else {
+                    // Draw body segments as blocks
+                    ctx.fillStyle = '#76ff03';
+                    ctx.strokeStyle = '#006400';
+                    ctx.fillRect(segment[0], segment[1], 20, 20);
+                    ctx.strokeRect(segment[0], segment[1], 20, 20);
+                }
+            });
+
+            // Draw the apple using an image
+            const appleImage = new Image();
+            appleImage.src = 'https://cdn-icons-png.flaticon.com/512/415/415733.png';
+            appleImage.onload = function () {
+                ctx.drawImage(appleImage, apple[0], apple[1], 30, 30); // Increased apple size
+            };
+        }
+
+        function drawSnakeHead(x, y) {
+            // Snake head with eyes and a mouth
+            ctx.fillStyle = 'green';
+            ctx.beginPath();
+            ctx.arc(x + 10, y + 10, 10, 0, Math.PI * 2);  // Head body (circle)
+            ctx.fill();
+            ctx.strokeStyle = 'darkgreen';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Eyes (two small white circles)
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(x + 5, y + 7, 3, 0, Math.PI * 2);  // Left eye
+            ctx.arc(x + 15, y + 7, 3, 0, Math.PI * 2); // Right eye
+            ctx.fill();
+
+            // Draw mouth (simple arc)
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(x + 10, y + 15, 5, 0, Math.PI);  // Mouth (half circle)
+            ctx.stroke();
+        }
+
+        function drawSnakeTail(x, y) {
+            // Snake tail with rounded end
+            ctx.fillStyle = 'green';
+            ctx.beginPath();
+            ctx.arc(x + 10, y + 10, 10, 0, Math.PI * 2);  // Tail body (rounded)
+            ctx.fill();
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = score;
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (gameOver) return;
+
+            if (event.key === 'ArrowUp' && direction !== 'DOWN') direction = 'UP';
+            if (event.key === 'ArrowDown' && direction !== 'UP') direction = 'DOWN';
+            if (event.key === 'ArrowLeft' && direction !== 'RIGHT') direction = 'LEFT';
+            if (event.key === 'ArrowRight' && direction !== 'LEFT') direction = 'RIGHT';
+        });
+    </script>
+</body>
+</html>
