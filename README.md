@@ -1,7 +1,5 @@
 <h1>SNAKE AND APPLE GAME!🐍🐉</h1>
 
-
-
 <H2>THIS GAME IS DEVELOPED WITH THE HELP OF DJANGO FRAMEWORK</H2>
 
 
@@ -24,7 +22,8 @@
 <h2>Press Arrow DOWN</h2>----><p>FOR DOWNWORD MOVEMENT</p>
 <h2>Press Arrow LEFT</h2>----><p>FOR LEFT MOVEMENT</p>
 <h2>Press Arrow RIGHT</h2>----><p>FOR RIGHT MOVEMENT</p>
-
+<h1>StartButton:To start they game</h1>
+<h1>StopButton:To Stop they game</h1>
 <h1>ENJOY THEY GAME!😊👍</h1>
 
 
