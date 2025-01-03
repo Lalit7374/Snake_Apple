@@ -1,1 +1,6 @@
 <h1>SNAKE AND APPLE GAME</h1>
+
+<H2>THIS GAME IS DEVELOPED WITH THE HELP OF DJANGO FRAMEWORK</H2>
+
+<h1>Backend:Python,Node.js</h1>
+<h1>Frontend:HTML,CSS,JS</h1>
