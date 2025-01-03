@@ -2,12 +2,11 @@
 
 
 
+<H2>THIS GAME IS DEVELOPED WITH THE HELP OF DJANGO FRAMEWORK</H2>
 
 
 ![ezgif-5-651bbedc54](https://github.com/user-attachments/assets/d4c689e5-f179-443d-8d34-6bb58cf5382d)
 
-
-<H2>THIS GAME IS DEVELOPED WITH THE HELP OF DJANGO FRAMEWORK</H2>
 
 <h1>Backend:Python,Node.js</h1>
 <h1>Frontend:HTML,CSS,JS</h1>
