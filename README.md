@@ -1,5 +1,4 @@
-<h1>SNAKE AND APPLE GAME![image](https://github.com/user-attachments/assets/d4d7b954-9f74-4960-b171-f4ad482774c8)
-🐍</h1>
+<h1>SNAKE AND APPLE GAME!🐍</h1>
 
 <H2>THIS GAME IS DEVELOPED WITH THE HELP OF DJANGO FRAMEWORK</H2>
 
