@@ -18,10 +18,10 @@
 
 <p>click to they url with (ctrl+click) it will redirect they web page <p>
 <h2>How to play this game</h2>
-<h2>Press Arrow UP</h2>----><p>FOR UPWORD MOVEMENT</p>
-<h2>Press Arrow DOWN</h2>----><p>FOR DOWNWORD MOVEMENT</p>
-<h2>Press Arrow LEFT</h2>----><p>FOR LEFT MOVEMENT</p>
-<h2>Press Arrow RIGHT</h2>----><p>FOR RIGHT MOVEMENT</p>
+<h3>Press Arrow UP</h3>----><p>FOR UPWORD MOVEMENT</p>
+<h3>Press Arrow DOWN</h3>----><p>FOR DOWNWORD MOVEMENT</p>
+<h3>Press Arrow LEFT</h3>----><p>FOR LEFT MOVEMENT</p>
+<h3>Press Arrow RIGHT</h3>----><p>FOR RIGHT MOVEMENT</p>
 <h1>StartButton:To start they game</h1>
 <h1>StopButton:To Stop they game</h1>
 
